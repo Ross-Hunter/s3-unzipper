@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2017 Steve Yardumian
+Copyright (c) 2017 Steve Yardumian, Ross Hunter
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,8 +23,10 @@ SOFTWARE.
 
 var Utils = require("./util");
 
-function s3Unzip(command, cb){
-  if (cb === undefined) {cb = function(err, success) {};}
+function s3Unzip(command, cb) {
+  if (cb === undefined) {
+    cb = function(err, success) {};
+  }
   var vBucket, vFile;
   if (command.args && command.args.length >= 2) {
     vBucket = command.args[0];
@@ -36,22 +38,15 @@ function s3Unzip(command, cb){
   if (command.file) {
     vFile = command.file;
   }
-  Utils.decompress({
-    bucket: vBucket,
-    file: vFile,
-    deleteOnSuccess: command.deleteOnSuccess,
-    verbose: command.verbose
-  }, cb);
+  Utils.decompress(
+    {
+      bucket: vBucket,
+      file: vFile,
+      deleteOnSuccess: command.deleteOnSuccess,
+      verbose: command.verbose
+    },
+    cb
+  );
 }
 
 module.exports = s3Unzip;
-
-module.exports.handler = function(event, context, callback) {
-  if (callback === undefined) {callback = function(err, success) {};}
-  Utils.decompress({
-    bucket: event.Records[0].s3.bucket.name,
-    file: event.Records[0].s3.object.key,
-    deleteOnSuccess: true,
-    verbose: true
-  }, callback);
-};
